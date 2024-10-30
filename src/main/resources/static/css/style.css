@@ -1,0 +1,85 @@
+/* style.css */
+
+/* Ustawienia ogólne */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+}
+
+/* Stylizacja kontenera formularza */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Dodaj ten styl */
+    gap: 20px; /* Dodaj ten styl, aby dodać odstępy między elementami */
+}
+
+/* Stylizacja nagłówków */
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Stylizacja etykiet */
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
+    text-align: left;
+}
+
+/* Stylizacja pól wejściowych */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Stylizacja przycisków */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Stylizacja linków */
+a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+/* Stylizacja komunikatów o błędach */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: -15px;
+    margin-bottom: 10px;
+}
+

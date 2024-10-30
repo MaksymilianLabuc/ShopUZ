@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rejestracja</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<h2>Rejestracja</h2>
+<form th:action="@{/register}" th:object="${registerForm}" method="post">
+    <div>
+        <label for="username">Nazwa użytkownika:</label>
+        <input type="text" id="username" th:field="*{username}" required>
+        <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+    </div>
+    <div>
+        <label for="password">Hasło:</label>
+        <input type="password" id="password" th:field="*{password}" required>
+        <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+    </div>
+    <div>
+        <button type="submit">Zarejestruj się</button>
+    </div>
+</form>
+<p>Masz już konto? <a th:href="@{/login}">Zaloguj się tutaj</a></p>
+</body>
+</html>
