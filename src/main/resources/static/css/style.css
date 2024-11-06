@@ -3,13 +3,24 @@
 /* Ustawienia ogólne */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
     flex-direction: column;
+}
+
+/* Tryb jasny */
+body.light-mode {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+/* Tryb ciemny */
+body.dark-mode {
+    background-color: #333;
+    color: #f2f2f2;
 }
 
 /* Stylizacja kontenera formularza */
@@ -21,22 +32,41 @@ form {
     width: 300px;
     text-align: center;
     display: flex;
-    flex-direction: column; /* Dodaj ten styl */
-    gap: 20px; /* Dodaj ten styl, aby dodać odstępy między elementami */
+    flex-direction: column;
+    gap: 20px;
+}
+
+body.dark-mode form {
+    background-color: #444;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 /* Stylizacja nagłówków */
 h2 {
     margin-bottom: 20px;
+}
+
+body.light-mode h2 {
     color: #333;
+}
+
+body.dark-mode h2 {
+    color: #f2f2f2;
 }
 
 /* Stylizacja etykiet */
 label {
     display: block;
     margin-bottom: 8px;
-    color: #666;
     text-align: left;
+}
+
+body.light-mode label {
+    color: #666;
+}
+
+body.dark-mode label {
+    color: #ccc;
 }
 
 /* Stylizacja pól wejściowych */
@@ -49,6 +79,14 @@ input[type="email"] {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="email"] {
+    background-color: #555;
+    border: 1px solid #888;
+    color: #f2f2f2;
 }
 
 /* Stylizacja przycisków */
@@ -66,20 +104,47 @@ button:hover {
     background-color: #45a049;
 }
 
+body.dark-mode button {
+    background-color: #66BB6A;
+}
+
+body.dark-mode button:hover {
+    background-color: #57A05A;
+}
+.small-button {
+    padding: 5px 10px;
+    font-size: 0.8em;
+    max-width: 150px;
+}
+
 /* Stylizacja linków */
 a {
-    color: #4CAF50;
     text-decoration: none;
+}
+
+body.light-mode a {
+    color: #4CAF50;
+}
+
+body.dark-mode a {
+    color: #66BB6A;
 }
 
 a:hover {
     text-decoration: underline;
 }
+
 /* Stylizacja komunikatów o błędach */
 .error-message {
-    color: red;
     font-size: 0.9em;
     margin-top: -15px;
     margin-bottom: 10px;
 }
 
+body.light-mode .error-message {
+    color: red;
+}
+
+body.dark-mode .error-message {
+    color: #FF6666;
+}

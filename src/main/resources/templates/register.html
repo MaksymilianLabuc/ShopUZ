@@ -3,8 +3,10 @@
 <head>
     <title>Rejestracja</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
+<button id="theme-toggle" class="small-button">Zmień tryb</button>
 <h2>Rejestracja</h2>
 <form th:action="@{/register}" th:object="${registerForm}" method="post">
     <div>
@@ -17,10 +19,22 @@
         <input type="password" id="password" th:field="*{password}" required>
         <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
     </div>
+    <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
     <div>
         <button type="submit">Zarejestruj się</button>
     </div>
 </form>
 <p>Masz już konto? <a th:href="@{/login}">Zaloguj się tutaj</a></p>
+<script>
+    const currentTheme = localStorage.getItem('theme') || 'light-mode';
+    document.body.classList.add(currentTheme);
+
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+        const newTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+        document.body.classList.remove('light-mode', 'dark-mode');
+        document.body.classList.add(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+</script>
 </body>
 </html>
