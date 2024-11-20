@@ -133,7 +133,11 @@ body.dark-mode a {
 a:hover {
     text-decoration: underline;
 }
-
+.button-container {
+    display: flex;
+    min-width: 300px;
+    max-width: 350px;
+}
 /* Stylizacja komunikatów o błędach */
 .error-message {
     font-size: 0.9em;

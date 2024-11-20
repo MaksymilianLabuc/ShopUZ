@@ -10,6 +10,7 @@ public class LoginForm {
     @NotBlank(message = "Hasło jest wymagane")
     private String password;
 
+
     public @NotBlank(message = "Nazwa użytkownika jest wymagana") String getUsername() {
         return username;
     }

@@ -13,6 +13,10 @@ public class RegisterForm {
         this.username = username;
     }
 
+    @Size(min = 6, message = "Hasło musi mieć co najmniej 6 znaków")
+    @NotBlank(message = "Hasło jest wymagane")
+    private String password;
+
     public void setPassword(@Size(min = 6, message = "Hasło musi mieć co najmniej 6 znaków") @NotBlank(message = "Hasło jest wymagane") String password) {
         this.password = password;
     }
@@ -24,11 +28,5 @@ public class RegisterForm {
     public @NotBlank(message = "Nazwa użytkownika jest wymagana") String getUsername() {
         return username;
     }
-
-    @Size(min = 6, message = "Hasło musi mieć co najmniej 6 znaków")
-    @NotBlank(message = "Hasło jest wymagane")
-    private String password;
-
-    // Gettery i settery
 }
 

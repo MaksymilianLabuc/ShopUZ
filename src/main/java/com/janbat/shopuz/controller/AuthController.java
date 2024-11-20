@@ -3,7 +3,6 @@ package com.janbat.shopuz.controller;
 import com.janbat.shopuz.CaptchaSettings;
 import com.janbat.shopuz.model.LoginForm;
 import com.janbat.shopuz.model.RegisterForm;
-import com.janbat.shopuz.model.User;
 import com.janbat.shopuz.CaptchaService;
 import com.janbat.shopuz.service.UserService;
 import jakarta.validation.Valid;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 @Controller
 public class AuthController {
@@ -37,8 +35,9 @@ public class AuthController {
         model.addAttribute("captchaSettings", captchaSettings);
         return "login";
     }
+
     @PostMapping("/login")
-    public String loginUser(@RequestParam("g-recaptcha-response") String captchaResponse, @Valid LoginForm loginForm, BindingResult bindingResult, Model model) {
+    public String loginUser(@RequestParam("g-recaptcha-response") String captchaResponse, @Valid @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "login";
         }
@@ -49,6 +48,7 @@ public class AuthController {
         // Logika logowania
         return "redirect:/home";
     }
+
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("registerForm", new RegisterForm());
@@ -69,4 +69,3 @@ public class AuthController {
         return "redirect:/login";
     }
 }
-
