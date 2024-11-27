@@ -1,10 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Strona Główna</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Shopping Site</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/homePage.css}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a href="#">Your Account</a></li>
+        <li><a href="#">Logout</a></li>
+        <li><a th:href="@{/add-product}">Add Product</a></li>
+    </ul>
+</nav>
+<div class="container">
+    <h1>Product List</h1>
+    <ul>
+        <li th:each="product : ${products}" class="product" th:id="'product-' + ${product.id}">
+            <h2 th:text="${product.name}"></h2>
+            <p th:text="${product.description}"></p>
+            <span th:text="${product.price}"></span>
+            <div class="rating" th:attr="data-product-id=${product.id}">
+                <span th:each="star : ${#numbers.sequence(0, 4)}"
+                      th:classappend="${star < product.rating} ? 'selected' : ''"
+                      th:onclick="|rateProduct(${product.id}, ${star})|"></span>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<script th:inline="javascript">
+    function rateProduct(productId, rating) {
+        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+        fetch(`/rate-product/${productId}/${rating}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Ensure we parse the JSON response
+            })
+            .then(data => {
+                console.log(data.message);
+                updateRatingUI(productId, rating);
+            })
+            .catch(error => console.error('There was a problem with the fetch operation:', error));
+    }
+
+    function updateRatingUI(productId, rating) {
+        const productElement = document.getElementById(`product-${productId}`);
+        if (productElement) {
+            const stars = productElement.querySelectorAll('.rating span');
+            stars.forEach((star, index) => {
+                if (index <= rating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+    }
+</script>
+
 </body>
 </html>
