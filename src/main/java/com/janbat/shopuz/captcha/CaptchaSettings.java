@@ -1,4 +1,4 @@
-package com.janbat.shopuz;
+package com.janbat.shopuz.captcha;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

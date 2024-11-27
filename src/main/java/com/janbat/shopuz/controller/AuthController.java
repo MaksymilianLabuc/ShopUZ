@@ -1,9 +1,9 @@
 package com.janbat.shopuz.controller;
 
-import com.janbat.shopuz.CaptchaSettings;
+import com.janbat.shopuz.captcha.CaptchaSettings;
 import com.janbat.shopuz.model.LoginForm;
 import com.janbat.shopuz.model.RegisterForm;
-import com.janbat.shopuz.CaptchaService;
+import com.janbat.shopuz.captcha.CaptchaService;
 import com.janbat.shopuz.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
