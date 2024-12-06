@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Rejestracja</title>
+    <title th:text="#{register.title}">Rejestracja</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-<h2>Rejestracja</h2>
+<h2 th:text="#{register.title}">Rejestracja</h2>
 <div class="button-container">
-    <button id="theme-toggle" class="small-button">Zmień tryb</button>
-    <button id="language-toggle" class="small-button">Polski</button>
+    <button id="theme-toggle" class="small-button" th:text="#{buttons.changeTheme}">Zmien tryb</button>
+    <button id="language-toggle" class="small-button" th:text="#{buttons.language}">Polski</button>
 </div>
 <form th:action="@{/register}" th:object="${registerForm}" method="post">
     <div>
-        <label for="username">Nazwa użytkownika:</label>
+        <label for="username" th:text="#{register.username}">Nazwa uzytkownika:</label>
         <input type="text" id="username" th:field="*{username}" required>
         <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
     </div>
     <div>
-        <label for="password">Hasło:</label>
+        <label for="password" th:text="#{register.password}">Haslo:</label>
         <input type="password" id="password" th:field="*{password}" required>
         <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
     </div>
     <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
     <div th:if="${captchaError}" class="error-message"> <p th:text="${captchaError}"></p> </div>
     <div>
-        <button type="submit">Zarejestruj się</button>
+        <button type="submit" th:text="#{register.submit}">Zarejestruj sie</button>
     </div>
 </form>
-<p>Masz już konto? <a th:href="@{/login}" id="login-link">Zaloguj się tutaj</a></p>
+<p th:utext="#{register.alreadyHaveAccount}">Masz juz konto? <a th:href="@{/login}(lang=${#locale.language})" id="login-link">Zaloguj sie tutaj</a></p>
 <script>
     const currentTheme = localStorage.getItem('theme') || 'light-mode';
     document.body.classList.add(currentTheme);
@@ -39,21 +39,17 @@
         document.body.classList.add(newTheme);
         localStorage.setItem('theme', newTheme);
     });
-    const savedLanguage = localStorage.getItem('language') || 'Polski';
-    if (savedLanguage === 'English') {
-        translatePageToEnglish();
-    } else {
-        translatePageToPolish();
-    }
-    document.getElementById('language-toggle').addEventListener('click', function() {
-        const button = document.getElementById('language-toggle');
-        if (button.innerText === 'Polski') {
-            translatePageToEnglish();
-        } else {
-            translatePageToPolish();
-        }
+
+    document.getElementById('language-toggle').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+        const currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'pl';
+        console.log('Current Language:', currentLanguage);
+        const newLanguage = currentLanguage === 'pl' ? 'en' : 'pl';
+        console.log('New Language:', newLanguage);
+        window.location.assign(`${window.location.pathname}?lang=${newLanguage}`);
     });
-    let alertMessage = "Proszę zaznaczyć CAPTCHA.";
+
+    let alertMessage = /*[[#{register.captchaAlert}]]*/ "Proszę zaznaczyć CAPTCHA.";
     document.querySelector('form').addEventListener('submit', function(event) {
         var recaptcha = document.querySelector('.g-recaptcha-response').value;
         if (recaptcha === "") {
@@ -61,28 +57,6 @@
             alert(alertMessage);
         }
     });
-    function translatePageToEnglish() {
-        document.querySelector('button[id="theme-toggle"]').innerText="Change theme";
-        document.querySelector('button[id="language-toggle"]').innerText="English";
-        document.querySelector('h2').innerText = 'Register';
-        document.querySelector('label[for="username"]').innerText = 'Username:';
-        document.querySelector('label[for="password"]').innerText = 'Password:';
-        document.querySelector('button[type="submit"]').innerText = 'Register';
-        document.querySelector('p').innerHTML = 'Don you have an account? <a href="/login" id="login-link">Login here</a>';
-        //alertMessage = "Please check the CAPTCHA.";
-        localStorage.setItem('language', 'English');
-    }
-    function translatePageToPolish() {
-        document.querySelector('button[id="theme-toggle"]').innerText="Zmień tryb";
-        document.querySelector('button[id="language-toggle"]').innerText="Polski";
-        document.querySelector('h2').innerText = 'Rejestracja';
-        document.querySelector('label[for="username"]').innerText = 'Nazwa użytkownika:';
-        document.querySelector('label[for="password"]').innerText = 'Hasło:';
-        document.querySelector('button[type="submit"]').innerText = 'Zarejestruj się';
-        document.querySelector('p').innerHTML = 'Masz już konto? <a href="/login" id="login-link">Zaloguj się tutaj</a>';
-        //alertMessage = "Proszę zaznaczyć CAPTCHA.";
-        localStorage.setItem('language', 'Polski');
-    }
 </script>
 </body>
 </html>
