@@ -2,6 +2,7 @@ package com.janbat.shopuz.controller;
 
 import com.janbat.shopuz.model.ProductListing;
 import com.janbat.shopuz.service.ProductListingService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,11 +19,24 @@ public class HomeController {
     private ProductListingService productListingService;
 
     @GetMapping("/home")
-    public String home(Model model) {
+    public String home(Model model, HttpServletRequest request) {
         List<ProductListing> productListings = productListingService.getAllProductListings();
-        model.addAttribute("products",productListings);
+        model.addAttribute("products", productListings);
+
+        // Uzyskanie nazwy użytkownika z sesji
+        String username = (String) model.asMap().get("username");
+        if (username == null) {
+            username = (String) request.getSession().getAttribute("username");
+        }
+        if (username != null) {
+            model.addAttribute("username", username);
+            System.out.println("Username in HomeController: " + username); // Debugging
+        } else {
+            System.out.println("Username is null in HomeController"); // Debugging
+        }
         return "home";
     }
+
     @GetMapping("/add-product")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new ProductListing());

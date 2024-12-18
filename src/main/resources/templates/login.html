@@ -11,7 +11,7 @@
     <button id="theme-toggle" class="small-button" th:text="#{buttons.changeTheme}">Zmien tryb</button>
     <button id="language-toggle" class="small-button" th:text="#{buttons.language}">Polski</button>
 </div>
-<form th:action="@{/login}" th:object="${loginForm}" method="post" th:attr="data-captcha-alert-message=${captchaAlertMessage}">
+<form th:action="@{/login}" th:object="${loginForm}" method="post">
     <div>
         <label for="username" th:text="#{login.username}">Nazwa uzytkownika:</label>
         <input type="text" id="username" th:field="*{username}" required>
@@ -49,7 +49,7 @@
         window.location.replace(`${window.location.pathname}?lang=${newLanguage}`);
     });
 
-    let alertMessage = document.querySelector('form').dataset.captchaAlertMessage;
+    let alertMessage = "Proszę zaznaczyć CAPTCHA.";
     document.querySelector('form').addEventListener('submit', function(event) {
         var recaptcha = document.querySelector('.g-recaptcha-response').value;
         if (recaptcha === "") {

@@ -19,19 +19,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/register","/login", "/home").permitAll()
                         .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/rate-product/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/rate-product/**")
                 )
-                .formLogin(form -> form
+                /*.formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
-                )
+                )*/
                 .logout(logout -> logout
                         .permitAll()
                 );

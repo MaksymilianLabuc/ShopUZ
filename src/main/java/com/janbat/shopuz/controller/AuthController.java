@@ -5,6 +5,7 @@ import com.janbat.shopuz.model.LoginForm;
 import com.janbat.shopuz.model.RegisterForm;
 import com.janbat.shopuz.captcha.CaptchaService;
 import com.janbat.shopuz.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AuthController {
@@ -33,11 +35,13 @@ public class AuthController {
     public String login(Model model) {
         model.addAttribute("loginForm", new LoginForm());
         model.addAttribute("captchaSettings", captchaSettings);
+        System.out.println("Username:"); // Debugging
         return "login";
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestParam("g-recaptcha-response") String captchaResponse, @Valid @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult, Model model) {
+    public String loginUser(@RequestParam("g-recaptcha-response") String captchaResponse, @Valid @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        System.out.println("Username1:"); // Debugging
         if (bindingResult.hasErrors()) {
             return "login";
         }
@@ -46,8 +50,17 @@ public class AuthController {
             return "login";
         }
         // Logika logowania
+        String username = loginForm.getUsername(); // Zakładam, że LoginForm ma metodę getUsername()
+        System.out.println("Username: " + username); // Debugging
+        if (username != null) {
+            redirectAttributes.addFlashAttribute("username", loginForm.getUsername());
+            System.out.println("Username: " + loginForm.getUsername()); // Debugging
+        } else {
+            System.out.println("Username is null"); // Debugging
+        }
         return "redirect:/home";
     }
+
 
     @GetMapping("/register")
     public String register(Model model) {
