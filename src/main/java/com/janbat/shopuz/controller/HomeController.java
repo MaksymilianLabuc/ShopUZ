@@ -60,5 +60,11 @@ public class HomeController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/product/{id}")
+    public String showProductDetails(@PathVariable Long id, Model model) {
+        ProductListing product = productListingService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        model.addAttribute("product", product);
+        return "productDetails"; // Assuming you have a productDetails.html template
+    }
 
 }

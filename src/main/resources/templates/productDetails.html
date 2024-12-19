@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product Details</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/productDetails.css}">
+</head>
+<body>
+<h1>Product Details</h1>
+
+<div>
+    <h2><span th:text="${product.name}"></span></h2>
+    <p><span th:text="${product.description}"></span></p>
+    <p>Price: <span th:text="${product.price}"></span></p>
+    <p>Owner: <span th:text="${product.owner}"></span></p>
+    <div class="rating">
+            <span th:each="star : ${#numbers.sequence(0, 4)}"
+                  th:classappend="${star < product.rating} ? 'selected' : ''"></span>
+    </div>
+</div>
+
+<a href="/home">Back to Home</a>
+</body>
+</html>

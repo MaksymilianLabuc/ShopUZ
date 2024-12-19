@@ -24,7 +24,7 @@
             <span th:text="${product.price}"></span>
             <div class="rating" th:attr="data-product-id=${product.id}">
                 <span th:each="star : ${#numbers.sequence(0, 4)}"
-                      th:classappend="${star < product.rating} ? 'selected' : ''"
+                      th:classappend="${star <= product.rating} ? 'selected' : ''"
                       th:onclick="|rateProduct(${product.id}, ${star})|"></span>
             </div>
         </li>
@@ -36,7 +36,7 @@
         let csrfToken = document.querySelector('meta[name="_csrf"]').content;
         let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-        fetch(`/rate-product/${productId}/${rating}`, {
+        fetch(`/rate-product/${productId}/${rating+1}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
