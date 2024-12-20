@@ -141,4 +141,9 @@ public class HomeController {
         productListingService.saveProduct(product);
         return "redirect:/product/" + productId;
     }
+
+    @GetMapping("/logout") public String logout(HttpServletRequest request) {
+        request.getSession().invalidate(); // Inwalidacja sesji
+        return "redirect:/login"; // Przekierowanie do panelu logowania
+        }
 }
