@@ -2,22 +2,75 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Product Details</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/productDetails.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/homePage.css}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
-<h1>Product Details</h1>
-
-<div>
-    <h2><span th:text="${product.name}"></span></h2>
-    <p><span th:text="${product.description}"></span></p>
-    <p>Price: <span th:text="${product.price}"></span></p>
-    <p>Owner: <span th:text="${product.owner}"></span></p>
-    <div class="rating">
-            <span th:each="star : ${#numbers.sequence(0, 4)}"
-                  th:classappend="${star < product.rating} ? 'selected' : ''"></span>
+<nav>
+    <ul>
+        <li><a th:href="@{/home}">Home</a></li>
+        <li th:if="${username != null}" class="dropdown">
+            <a href="#" th:text="${username}"></a>
+            <div class="dropdown-content">
+                <a href="#">Koszyk</a>
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </li>
+        <li th:if="${username == null}"><a th:href="@{/login}">Zaloguj się</a></li>
+        <li th:if="${username == null}"><a th:href="@{/register}">Zarejestruj się</a></li>
+        <li><a th:href="@{/add-product}">Add Product</a></li>
+        <li><a id="theme-toggle" href="#">Zmień tryb</a></li>
+        <li><a href="#">Polski</a></li>
+    </ul>
+</nav>
+<div class="container">
+    <h1>Product Details</h1>
+    <div class="product-details">
+        <h2>Nazwa produktu: <span th:text="${product.name}"></span></h2>
+        <p>Opis produktu: <span th:text="${product.description}"></span></p>
+        <span>Cena: <span th:text="${product.price}"></span></span>
+        <p>Wystawiający: <span th:text="${product.owner}"></span></p>
+        <div class="rating" th:attr="data-product-id=${product.id}">
+            <p>Ocena:  (<span th:text="${opinionCount}"></span>)</p>
+            <span th:each="star : ${#numbers.sequence(1, 5)}"
+                  th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
+        </div>
+        <a th:href="@{/home}" class="normal">Powrót do listy produktów</a>
     </div>
+    <div class="opinions">
+        <h3>Opinie</h3>
+        <ul>
+            <li th:each="opinion : ${opinions}">
+                <p><strong>Użytkownik:</strong> <span th:text="${opinion.uzytkownik}"></span></p>
+                <p><strong>Ocena:</strong> <span th:text="${opinion.ocena}"></span></p>
+                <p><strong>Komentarz:</strong> <span th:text="${opinion.opis}"></span></p>
+            </li>
+        </ul>
+    </div>
+    <div class="add-opinion" th:if="${username != null}">
+        <h3>Dodaj opinię</h3>
+        <form th:action="@{/add-opinion/{productId}(productId=${product.id})}" method="post" th:object="${opinion}">
+            <label for="ocena">Ocena:</label>
+            <input type="number" id="ocena" th:field="*{ocena}" min="1" max="5" required/><br/>
+            <label for="opis">Komentarz:</label>
+            <textarea id="opis" th:field="*{opis}" required></textarea><br/>
+            <button type="submit">Dodaj opinię</button>
+        </form>
+    </div>
+    <p th:if="${username == null}" class="error-message">You must be logged in to add an opinion.</p>
 </div>
 
-<a href="/home">Back to Home</a>
+<script th:inline="javascript">
+    const currentTheme = localStorage.getItem('theme') || 'light-mode';
+    document.body.classList.add(currentTheme);
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const newTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+        document.body.classList.remove('light-mode', 'dark-mode');
+        document.body.classList.add(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+</script>
+
 </body>
 </html>

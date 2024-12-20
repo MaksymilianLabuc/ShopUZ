@@ -53,13 +53,14 @@ public class AuthController {
         String username = loginForm.getUsername(); // Zakładam, że LoginForm ma metodę getUsername()
         System.out.println("Username: " + username); // Debugging
         if (username != null) {
-            redirectAttributes.addFlashAttribute("username", loginForm.getUsername());
-            System.out.println("Username: " + loginForm.getUsername()); // Debugging
+            request.getSession().setAttribute("username", username); // Ustawienie nazwy użytkownika w sesji
+            System.out.println("Username: " + username); // Debugging
         } else {
             System.out.println("Username is null"); // Debugging
         }
         return "redirect:/home";
     }
+
 
 
     @GetMapping("/register")

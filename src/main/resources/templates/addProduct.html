@@ -8,25 +8,39 @@
 <nav>
   <ul>
     <li><a th:href="@{/home}">Home</a></li>
-    <li><a href="#">Your Account</a></li>
-    <li><a href="#">Logout</a></li>
+    <li th:if="${username != null}" class="dropdown">
+      <a href="#" th:text="${username}"></a>
+      <div class="dropdown-content">
+        <a th:href="@{/logout}">Logout</a>
+      </div>
+    </li>
+    <li th:if="${username == null}"><a th:href="@{/login}">Zaloguj się</a></li>
+    <li th:if="${username == null}"><a th:href="@{/register}">Zarejestruj się</a></li>
     <li><a th:href="@{/add-product}">Add Product</a></li>
+    <li><a href="#">Zmień tryb</a></li>
+    <li><a href="#">Polski</a></li>
   </ul>
 </nav>
 <div class="container">
   <h1>Add a New Product</h1>
-  <form action="#" th:action="@{/add-product}" th:object="${product}" method="post">
-    <label for="name">Name:</label>
-    <input type="text" id="name" th:field="*{name}" /><br/>
+  <div th:if="${username != null}">
+    <form action="#" th:action="@{/add-product}" th:object="${product}" method="post">
+      <label for="name">Name:</label>
+      <input type="text" id="name" th:field="*{name}" /><br/>
 
-    <label for="price">Price:</label>
-    <input type="text" id="price" th:field="*{price}" /><br/>
+      <label for="price">Price:</label>
+      <input type="text" id="price" th:field="*{price}" /><br/>
 
-    <label for="description">Description:</label>
-    <textarea id="description" th:field="*{description}"></textarea><br/>
+      <label for="description">Description:</label>
+      <textarea id="description" th:field="*{description}"></textarea><br/>
 
-    <button type="submit">Add Product</button>
-  </form>
+      <input type="hidden" th:field="*{owner}" th:value="${username}" /> <!-- Ukryte pole owner -->
+
+      <!-- Przycisk dodawania produktu -->
+      <button type="submit">Dodaj produkt</button>
+    </form>
+  </div>
+  <p th:if="${username == null}" class="error-message">Musisz być zalogowany aby dodać produkt.</p>
 </div>
 </body>
 </html>

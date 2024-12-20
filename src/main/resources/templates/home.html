@@ -9,66 +9,46 @@
 <body>
 <nav>
     <ul>
-        <li><a th:href="@{/}">Home</a></li>
-        <li><a href="#" th:text="${username}"></a></li>
-        <li><a href="#">Logout</a></li>
+        <li><a th:href="@{/home}">Home</a></li>
+        <li th:if="${username != null}" class="dropdown">
+            <a href="#" th:text="${username}"></a>
+            <div class="dropdown-content">
+                <a href="#">Koszyk</a>
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </li>
+        <li th:if="${username == null}"><a th:href="@{/login}">Zaloguj się</a></li>
+        <li th:if="${username == null}"><a th:href="@{/register}">Zarejestruj się</a></li>
         <li><a th:href="@{/add-product}">Add Product</a></li>
+        <li><a id="theme-toggle" href="#">Zmień tryb</a></li>
+        <li><a href="#">Polski</a></li>
     </ul>
 </nav>
 <div class="container">
     <h1>Product List</h1>
     <ul>
         <li th:each="product : ${products}" class="product" th:id="'product-' + ${product.id}">
-            <h2 th:text="${product.name}"></h2>
+            <a th:href="@{/product/{id}(id=${product.id})}"><h2 th:text="${product.name}"></h2></a>
             <p th:text="${product.description}"></p>
             <span th:text="${product.price}"></span>
             <div class="rating" th:attr="data-product-id=${product.id}">
-                <span th:each="star : ${#numbers.sequence(0, 4)}"
-                      th:classappend="${star <= product.rating} ? 'selected' : ''"
-                      th:onclick="|rateProduct(${product.id}, ${star})|"></span>
+                <p>Ocena: (<span th:text="${product.opinionCount}"></span>)</p>
+                <span th:each="star : ${#numbers.sequence(1, 5)}"
+                      th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
             </div>
         </li>
     </ul>
 </div>
 
 <script th:inline="javascript">
-    function rateProduct(productId, rating) {
-        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
-        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
-        fetch(`/rate-product/${productId}/${rating+1}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json(); // Ensure we parse the JSON response
-            })
-            .then(data => {
-                console.log(data.message);
-                updateRatingUI(productId, rating);
-            })
-            .catch(error => console.error('There was a problem with the fetch operation:', error));
-    }
-
-    function updateRatingUI(productId, rating) {
-        const productElement = document.getElementById(`product-${productId}`);
-        if (productElement) {
-            const stars = productElement.querySelectorAll('.rating span');
-            stars.forEach((star, index) => {
-                if (index <= rating) {
-                    star.classList.add('selected');
-                } else {
-                    star.classList.remove('selected');
-                }
-            });
-        }
-    }
+    const currentTheme = localStorage.getItem('theme') || 'light-mode';
+    document.body.classList.add(currentTheme);
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const newTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+        document.body.classList.remove('light-mode', 'dark-mode');
+        document.body.classList.add(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
 </script>
 
 </body>

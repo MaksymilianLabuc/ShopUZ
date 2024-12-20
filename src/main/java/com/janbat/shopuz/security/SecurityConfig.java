@@ -19,22 +19,24 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/register","/login", "/home","/product/**").permitAll()
+                        .requestMatchers("/register","/login", "/home","/product/**","/add-product","/logout","/add-opinion/**").permitAll()
                         .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/rate-product/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/rate-product/**, /product/**")
-                )
+                );
                 /*.formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )*/
-                .logout(logout -> logout
+                /*.logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
-                );
+                );*/
         return http.build();
     }
 
