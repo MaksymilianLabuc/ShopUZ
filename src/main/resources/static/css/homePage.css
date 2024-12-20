@@ -23,6 +23,8 @@ body.dark-mode {
 
 /* Stylizacja nawigacji */
 nav {
+    position: fixed;
+    top: 0;
     width: 100%;
     background-color: #4CAF50; /* Dopasowanie do trybu jasnego */
     color: white;
