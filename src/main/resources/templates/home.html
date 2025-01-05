@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Shopping Site</title>
+    <title th:text="#{home.title}">Shopping Site</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/homePage.css}">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -9,38 +9,64 @@
 <body>
 <nav>
     <ul>
-        <li><a th:href="@{/home}">Home</a></li>
+        <li><a th:href="@{/home}" th:text="#{home.home}">Home</a></li>
         <li th:if="${username != null}" class="dropdown">
             <a href="#" th:text="${username}"></a>
             <div class="dropdown-content">
-                <a href="#">Koszyk</a>
-                <a th:href="@{/logout}">Logout</a>
+                <a href="#" th:text="#{home.cart}">Koszyk</a>
+                <a th:href="@{/logout}" th:text="#{home.logout}">Logout</a>
             </div>
         </li>
-        <li th:if="${username == null}"><a th:href="@{/login}">Zaloguj się</a></li>
-        <li th:if="${username == null}"><a th:href="@{/register}">Zarejestruj się</a></li>
-        <li><a th:href="@{/add-product}">Add Product</a></li>
-        <li><a id="theme-toggle" href="#">Zmień tryb</a></li>
-        <li><a href="#">Polski</a></li>
+        <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{home.login}">Zaloguj się</a></li>
+        <li th:if="${username == null}"><a th:href="@{/register}" th:text="#{home.register}">Zarejestruj się</a></li>
+        <li><a th:href="@{/add-product}" th:text="#{home.addProduct}">Add Product</a></li>
+        <li><a id="theme-toggle" href="#" th:text="#{home.theme}">Zmień tryb</a></li>
+        <li><a id="language-toggle" href="#" th:text="#{home.language}">Polski</a></li>
     </ul>
 </nav>
 <div class="container">
-    <h1>Product List</h1>
-    <ul>
-        <li th:each="product : ${products}" class="product" th:id="'product-' + ${product.id}">
-            <a th:href="@{/product/{id}(id=${product.id})}"><h2 th:text="${product.name}"></h2></a>
-            <p th:text="${product.description}"></p>
-            <span th:text="${product.price}"></span>
-            <div class="rating" th:attr="data-product-id=${product.id}">
-                <p>Ocena: (<span th:text="${product.opinionCount}"></span>)</p>
-                <span th:each="star : ${#numbers.sequence(1, 5)}"
-                      th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
-            </div>
-        </li>
-    </ul>
+    <div class="sidebar">
+        <form action="/home" method="get">
+            <label for="minPrice" th:text="#{home.minPrice}">Minimalna cena:</label>
+            <input type="number" id="minPrice" name="minPrice" step="0.01" th:value="${minPrice}">
+
+            <label for="maxPrice" th:text="#{home.maxPrice}">Maksymalna cena:</label>
+            <input type="number" id="maxPrice" name="maxPrice" step="0.01" th:value="${maxPrice}">
+
+            <label for="minRating" th:text="#{home.minRating}">Minimalna ocena:</label>
+            <input type="number" id="minRating" name="minRating" min="1" max="5" th:value="${minRating}">
+
+            <button type="submit">Filtruj</button>
+        </form>
+    </div>
+    <div class="main-content">
+        <div class="sort-buttons">
+            <button th:onclick="'window.location.href=\'/home?sortField=name&sortDir=asc\''" th:text="#{home.sortByNameAsc}">Sortuj po nazwie (A-Z)</button>
+            <button th:onclick="'window.location.href=\'/home?sortField=name&sortDir=desc\''" th:text="#{home.sortByNameDesc}">Sortuj po nazwie (Z-A)</button>
+            <button th:onclick="'window.location.href=\'/home?sortField=rating&sortDir=asc\''" th:text="#{home.sortByRatingAsc}">Sortuj po ocenie (rosnąco)</button>
+            <button th:onclick="'window.location.href=\'/home?sortField=rating&sortDir=desc\''" th:text="#{home.sortByRatingDesc}">Sortuj po ocenie (malejąco)</button>
+            <button th:onclick="'window.location.href=\'/home?sortField=price&sortDir=asc\''" th:text="#{home.sortByPriceAsc}">Sortuj po cenie (rosnąco)</button>
+            <button th:onclick="'window.location.href=\'/home?sortField=price&sortDir=desc\''" th:text="#{home.sortByPriceDesc}">Sortuj po cenie (malejąco)</button>
+        </div>
+        <div class="product-list">
+            <ul>
+                <li th:each="product : ${products}" class="product" th:id="'product-' + ${product.id}">
+                    <a th:href="@{/product/{id}(id=${product.id})}"><h2 th:text="${product.name}"></h2></a>
+                    <p th:text="${product.description}"></p>
+                    <span th:text="${product.price}"></span>
+                    <div class="rating" th:attr="data-product-id=${product.id}">
+                        <p th:text="#{home.rating}">Ocena: (<span th:text="${product.opinionCount}"></span>)</p>
+                        <span th:each="star : ${#numbers.sequence(1, 5)}"
+                              th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 <script th:inline="javascript">
+
     const currentTheme = localStorage.getItem('theme') || 'light-mode';
     document.body.classList.add(currentTheme);
     document.getElementById('theme-toggle').addEventListener('click', function () {
@@ -49,6 +75,17 @@
         document.body.classList.add(newTheme);
         localStorage.setItem('theme', newTheme);
     });
+
+    document.getElementById('language-toggle').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+        console.log('Language toggle button clicked');
+        const currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'pl';
+        console.log('Current Language:', currentLanguage);
+        const newLanguage = currentLanguage === 'pl' ? 'en' : 'pl';
+        console.log('New Language:', newLanguage);
+        window.location.assign(`${window.location.pathname}?lang=${newLanguage}`);
+    });
+
 </script>
 
 </body>

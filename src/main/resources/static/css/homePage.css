@@ -3,10 +3,11 @@ body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     height: 100vh;
     margin: 0;
-    flex-direction: column;
+    padding-top: 100px;
+    overflow: auto;
 }
 
 /* Tryb jasny */
@@ -56,28 +57,81 @@ nav ul li a {
 
 /* Stylizacja kontenera */
 .container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
     margin-top: 20px;
-}
-body.light-mode a.normal {
-    color: #4CAF50;
+    margin-left: 320px; /* Szerokość paska bocznego + margines */
 }
 
-body.dark-mode a.normal {
-    color: #66BB6A;
-}
-/* Stylizacja nagłówków i tekstu */
-h1, h2, p, span {
-    margin-bottom: 10px;
+/* Stylizacja paska bocznego */
+.sidebar {
+    flex: 1;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-right: 1px solid #ccc;
+    position: fixed;
+    top: 100px; /* Odległość od góry strony */
+    height: calc(100vh - 100px); /* Wysokość paska bocznego */
+    overflow-y: auto; /* Przewijanie w pionie */
+    margin-right: 40px; /* Dodanie marginesu po prawej stronie */
 }
 
-/* Stylizacja produktów */
+body.dark-mode .sidebar {
+    background-color: #444;
+    color: #f2f2f2;
+}
+
+/* Stylizacja głównej zawartości */
+.main-content {
+    flex: 3;
+    padding: 20px;
+}
+
+/* Stylizacja przycisków sortowania */
+.sort-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.sort-buttons button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sort-buttons button:hover {
+    background-color: #45a049;
+}
+
+body.dark-mode .sort-buttons button {
+    background-color: #66BB6A;
+}
+
+body.dark-mode .sort-buttons button:hover {
+    background-color: #57A05A;
+}
+
+/* Stylizacja listy produktów */
+.product-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
 .product {
     border: 1px solid #ccc;
     padding: 10px;
     margin-bottom: 10px;
+    width: 100%;
 }
 
-/* Stylizacja ocen */
 .rating {
     display: flex;
 }
@@ -103,7 +157,7 @@ h1, h2, p, span {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color:  #4CAF50;
+    background-color: #4CAF50;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -126,7 +180,7 @@ body.dark-mode .dropdown-content a {
 }
 
 .dropdown-content a:hover {
-    background-color:  #4CAF50;
+    background-color: #4CAF50;
 }
 
 body.dark-mode .dropdown-content a:hover {
@@ -135,4 +189,20 @@ body.dark-mode .dropdown-content a:hover {
 
 .dropdown:hover .dropdown-content {
     display: block;
+}
+
+/* Stylizacja formularza filtrowania */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+form label {
+    margin-top: 10px;
+}
+
+form input, form button {
+    margin-top: 5px;
 }

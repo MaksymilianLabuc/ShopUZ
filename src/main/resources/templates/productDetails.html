@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Product Details</title>
+    <title th:text="#{productDetails.title}">Product Details</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/homePage.css}">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -9,59 +9,75 @@
 <body>
 <nav>
     <ul>
-        <li><a th:href="@{/home}">Home</a></li>
+        <li><a th:href="@{/home}" th:text="#{productDetails.home}">Home</a></li>
         <li th:if="${username != null}" class="dropdown">
             <a href="#" th:text="${username}"></a>
             <div class="dropdown-content">
-                <a href="#">Koszyk</a>
-                <a th:href="@{/logout}">Logout</a>
+                <a href="#" th:text="#{productDetails.cart}">Koszyk</a>
+                <a th:href="@{/logout}" th:text="#{productDetails.logout}">Logout</a>
             </div>
         </li>
-        <li th:if="${username == null}"><a th:href="@{/login}">Zaloguj się</a></li>
-        <li th:if="${username == null}"><a th:href="@{/register}">Zarejestruj się</a></li>
-        <li><a th:href="@{/add-product}">Add Product</a></li>
-        <li><a id="theme-toggle" href="#">Zmień tryb</a></li>
-        <li><a href="#">Polski</a></li>
+        <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{productDetails.login}">Zaloguj się</a></li>
+        <li th:if="${username == null}"><a th:href="@{/register}" th:text="#{productDetails.register}">Zarejestruj się</a></li>
+        <li><a th:href="@{/add-product}" th:text="#{productDetails.addProduct}">Add Product</a></li>
+        <li><a id="theme-toggle" href="#" th:text="#{productDetails.theme}">Zmień tryb</a></li>
+        <li><a id="language-toggle" href="#" th:text="#{productDetails.language}">Polski</a></li>
     </ul>
 </nav>
 <div class="container">
-    <h1>Product Details</h1>
+    <h1 th:text="#{productDetails.text}">Product Details</h1>
     <div class="product-details">
-        <h2>Nazwa produktu: <span th:text="${product.name}"></span></h2>
-        <p>Opis produktu: <span th:text="${product.description}"></span></p>
-        <span>Cena: <span th:text="${product.price}"></span></span>
-        <p>Wystawiający: <span th:text="${product.owner}"></span></p>
+        <h2>
+            <span th:text="#{productDetails.detailsName}">Nazwa produktu:</span>
+            <span th:text="${product.name}"></span>
+        </h2>
+        <p>
+            <span th:text="#{productDetails.detailsDescription}">Opis produktu:</span>
+            <span th:text="${product.description}"></span>
+        </p>
+        <span>
+        <span th:text="#{productDetails.detailsPrice}">Cena:</span>
+        <span th:text="${product.price}"></span>
+    </span>
+        <p>
+            <span th:text="#{productDetails.detailsSeller}">Wystawiający:</span>
+            <span th:text="${product.owner}"></span>
+        </p>
         <div class="rating" th:attr="data-product-id=${product.id}">
-            <p>Ocena:  (<span th:text="${opinionCount}"></span>)</p>
+            <p>
+                <span th:text="#{productDetails.detailsRating}">Ocena:</span>
+                (<span th:text="${opinionCount}"></span>)
+            </p>
             <span th:each="star : ${#numbers.sequence(1, 5)}"
                   th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
         </div>
-        <a th:href="@{/home}" class="normal">Powrót do listy produktów</a>
+        <a th:href="@{/home}" class="normal" th:text="#{productDetails.detailsGoBack}">Powrót do listy produktów</a>
     </div>
     <div class="opinions">
-        <h3>Opinie</h3>
+    <h3 th:text="#{productDetails.opinions}">Opinie</h3>
         <ul>
             <li th:each="opinion : ${opinions}">
-                <p><strong>Użytkownik:</strong> <span th:text="${opinion.uzytkownik}"></span></p>
-                <p><strong>Ocena:</strong> <span th:text="${opinion.ocena}"></span></p>
-                <p><strong>Komentarz:</strong> <span th:text="${opinion.opis}"></span></p>
+                <p th:text="#{productDetails.opinionUser}"><strong>Użytkownik:</strong> <span th:text="${opinion.uzytkownik}"></span></p>
+                <p th:text="#{productDetails.opinionRating}"><strong>Ocena:</strong> <span th:text="${opinion.ocena}"></span></p>
+                <p th:text="#{productDetails.opinionDescription}"><strong>Komentarz:</strong> <span th:text="${opinion.opis}"></span></p>
             </li>
         </ul>
     </div>
     <div class="add-opinion" th:if="${username != null}">
-        <h3>Dodaj opinię</h3>
+        <h3 th:text="#{productDetails.newOpinionText}">Dodaj opinię</h3>
         <form th:action="@{/add-opinion/{productId}(productId=${product.id})}" method="post" th:object="${opinion}">
-            <label for="ocena">Ocena:</label>
+            <label for="ocena" th:text="#{productDetails.opinionRating}">Ocena:</label>
             <input type="number" id="ocena" th:field="*{ocena}" min="1" max="5" required/><br/>
-            <label for="opis">Komentarz:</label>
+            <label for="opis" th:text="#{productDetails.opinionDescription}">Komentarz:</label>
             <textarea id="opis" th:field="*{opis}" required></textarea><br/>
-            <button type="submit">Dodaj opinię</button>
+            <button type="submit" th:text="#{buttons.addOpinion}">Dodaj opinię</button>
         </form>
     </div>
-    <p th:if="${username == null}" class="error-message">You must be logged in to add an opinion.</p>
+    <p th:if="${username == null}" class="error-message" th:text="#{productDetails.opinionError}">You must be logged in to add an opinion.</p>
 </div>
 
 <script th:inline="javascript">
+
     const currentTheme = localStorage.getItem('theme') || 'light-mode';
     document.body.classList.add(currentTheme);
     document.getElementById('theme-toggle').addEventListener('click', function () {
@@ -70,6 +86,17 @@
         document.body.classList.add(newTheme);
         localStorage.setItem('theme', newTheme);
     });
+
+    document.getElementById('language-toggle').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+        console.log('Language toggle button clicked');
+        const currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'pl';
+        console.log('Current Language:', currentLanguage);
+        const newLanguage = currentLanguage === 'pl' ? 'en' : 'pl';
+        console.log('New Language:', newLanguage);
+        window.location.assign(`${window.location.pathname}?lang=${newLanguage}`);
+    });
+
 </script>
 
 </body>

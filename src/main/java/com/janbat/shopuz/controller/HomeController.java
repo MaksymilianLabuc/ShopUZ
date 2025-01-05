@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -25,8 +26,40 @@ public class HomeController {
     private OpinionService opinionService;
 
     @GetMapping("/home")
-    public String home(Model model, HttpServletRequest request) {
+    public String home(@RequestParam(value = "sortField", required = false) String sortField,
+                       @RequestParam(value = "sortDir", required = false) String sortDir,
+                       @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
+                       @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
+                       @RequestParam(value = "minRating", required = false) Integer minRating,
+                       Model model, HttpServletRequest request) {
         List<ProductListing> productListings = productListingService.getAllProductListings();
+
+        // Filtrowanie produktów
+        if (minPrice != null) {
+            productListings = productListings.stream()
+                    .filter(p -> p.getPrice().compareTo(minPrice) >= 0)
+                    .collect(Collectors.toList());
+        }
+        if (maxPrice != null) {
+            productListings = productListings.stream()
+                    .filter(p -> p.getPrice().compareTo(maxPrice) <= 0)
+                    .collect(Collectors.toList());
+        }
+        if (minRating != null) {
+            productListings = productListings.stream()
+                    .filter(p -> p.getRating() >= minRating)
+                    .collect(Collectors.toList());
+        }
+
+        // Sortowanie produktów
+        if ("name".equals(sortField)) {
+            productListings.sort((p1, p2) -> "asc".equals(sortDir) ? p1.getName().compareTo(p2.getName()) : p2.getName().compareTo(p1.getName()));
+        } else if ("rating".equals(sortField)) {
+            productListings.sort((p1, p2) -> "asc".equals(sortDir) ? Integer.compare(p1.getRating(), p2.getRating()) : Integer.compare(p2.getRating(), p1.getRating()));
+        } else if ("price".equals(sortField)) {
+            productListings.sort((p1, p2) -> "asc".equals(sortDir) ? p1.getPrice().compareTo(p2.getPrice()) : p2.getPrice().compareTo(p1.getPrice()));
+        }
+
         // Dodanie liczby opinii dla każdego produktu
         for (ProductListing product : productListings) {
             int opinionCount = opinionService.countOpinionsByProductId(product.getId());
@@ -43,8 +76,18 @@ public class HomeController {
             System.out.println("Username is null in HomeController"); // Debugging
         }
 
+        // Dodanie atrybutów sortowania i filtrowania do modelu
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("minRating", minRating);
+
         return "home";
     }
+
+
+
 
     @GetMapping("/add-product")
     public String showAddProductForm(Model model, HttpServletRequest request) {

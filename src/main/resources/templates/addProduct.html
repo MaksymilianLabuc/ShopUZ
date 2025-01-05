@@ -1,46 +1,70 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Add Product</title>
+  <title th:text="#{addProduct.title}">Add Product</title>
   <link rel="stylesheet" type="text/css" th:href="@{/css/homePage.css}">
 </head>
 <body>
 <nav>
   <ul>
-    <li><a th:href="@{/home}">Home</a></li>
+    <li><a th:href="@{/home}" th:text="#{addProduct.home}">Home</a></li>
     <li th:if="${username != null}" class="dropdown">
       <a href="#" th:text="${username}"></a>
       <div class="dropdown-content">
-        <a th:href="@{/logout}">Logout</a>
+        <a href="#" th:text="#{addProduct.cart}">Koszyk</a>
+        <a th:href="@{/logout}" th:text="#{addProduct.logout}">Logout</a>
       </div>
     </li>
-    <li th:if="${username == null}"><a th:href="@{/login}">Zaloguj się</a></li>
-    <li th:if="${username == null}"><a th:href="@{/register}">Zarejestruj się</a></li>
-    <li><a th:href="@{/add-product}">Add Product</a></li>
-    <li><a href="#">Zmień tryb</a></li>
-    <li><a href="#">Polski</a></li>
+    <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{addProduct.login}">Zaloguj się</a></li>
+    <li th:if="${username == null}"><a th:href="@{/register}" th:text="#{addProduct.register}">Zarejestruj się</a></li>
+    <li><a th:href="@{/add-product}" th:text="#{addProduct.addProduct}">Add Product</a></li>
+    <li><a id="theme-toggle" href="#" th:text="#{addProduct.theme}">Zmień tryb</a></li>
+    <li><a id="language-toggle" href="#" th:text="#{addProduct.language}">Polski</a></li>
   </ul>
 </nav>
 <div class="container">
-  <h1>Add a New Product</h1>
+  <h1 th:text="#{addProduct.productText}">Add a new product</h1>
   <div th:if="${username != null}">
     <form action="#" th:action="@{/add-product}" th:object="${product}" method="post">
-      <label for="name">Name:</label>
+      <label for="name" th:text="#{addProduct.productName}">Name:</label>
       <input type="text" id="name" th:field="*{name}" /><br/>
 
-      <label for="price">Price:</label>
+      <label for="price" th:text="#{addProduct.productPrice}">Price:</label>
       <input type="text" id="price" th:field="*{price}" /><br/>
 
-      <label for="description">Description:</label>
+      <label for="description" th:text="#{addProduct.productDescription}">Description:</label>
       <textarea id="description" th:field="*{description}"></textarea><br/>
 
       <input type="hidden" th:field="*{owner}" th:value="${username}" /> <!-- Ukryte pole owner -->
 
       <!-- Przycisk dodawania produktu -->
-      <button type="submit">Dodaj produkt</button>
+      <button type="submit" th:text="#{buttons.addProduct}">Dodaj produkt</button>
     </form>
   </div>
-  <p th:if="${username == null}" class="error-message">Musisz być zalogowany aby dodać produkt.</p>
+  <p th:if="${username == null}" class="error-message" th:text="#{addProduct.productError}">Musisz być zalogowany aby dodać produkt.</p>
 </div>
+
+<script th:inline="javascript">
+
+  const currentTheme = localStorage.getItem('theme') || 'light-mode';
+  document.body.classList.add(currentTheme);
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    const newTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+    document.body.classList.remove('light-mode', 'dark-mode');
+    document.body.classList.add(newTheme);
+    localStorage.setItem('theme', newTheme);
+  });
+
+  document.getElementById('language-toggle').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent form submission
+    console.log('Language toggle button clicked');
+    const currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'pl';
+    console.log('Current Language:', currentLanguage);
+    const newLanguage = currentLanguage === 'pl' ? 'en' : 'pl';
+    console.log('New Language:', newLanguage);
+    window.location.assign(`${window.location.pathname}?lang=${newLanguage}`);
+  });
+
+</script>
 </body>
 </html>
