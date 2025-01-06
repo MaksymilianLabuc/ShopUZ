@@ -189,4 +189,27 @@ public class HomeController {
         request.getSession().invalidate(); // Inwalidacja sesji
         return "redirect:/login"; // Przekierowanie do panelu logowania
         }
+    @GetMapping("/edit-product/{id}")
+    public String showEditProductForm(@PathVariable Long id, Model model, HttpServletRequest request) {
+        ProductListing product = productListingService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        String username = (String) request.getSession().getAttribute("username");
+        if (username == null || !username.equals(product.getOwner())) {
+            return "redirect:/home"; // Przekierowanie, jeśli użytkownik nie jest właścicielem produktu
+        }
+        model.addAttribute("product", product);
+        model.addAttribute("username", username); // Dodanie nazwy użytkownika do modelu
+        return "editProduct"; // Nazwa szablonu HTML dla formularza edycji produktu
+    }
+    @PostMapping("/edit-product/{id}")
+    public String editProduct(@PathVariable Long id, @ModelAttribute ProductListing product, HttpServletRequest request, Model model) {
+        String username = (String) request.getSession().getAttribute("username");
+        if (username == null || !username.equals(product.getOwner())) {
+            return "redirect:/home"; // Przekierowanie, jeśli użytkownik nie jest właścicielem produktu
+        }
+        product.setId(id); // Ustawienie ID produktu
+        productListingService.saveProduct(product);
+        return "redirect:/home";
+    }
+
+
 }

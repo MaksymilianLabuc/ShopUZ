@@ -25,7 +25,7 @@
 <div class="container">
   <h1 th:text="#{addProduct.productText}">Add a new product</h1>
   <div th:if="${username != null}">
-    <form action="#" th:action="@{/add-product}" th:object="${product}" method="post">
+    <form action="#" th:action="@{/add-product}" th:object="${product}" method="post" class="edit-form">
       <label for="name" th:text="#{addProduct.productName}">Name:</label>
       <input type="text" id="name" th:field="*{name}" /><br/>
 

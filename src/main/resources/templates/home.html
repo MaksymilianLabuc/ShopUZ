@@ -24,7 +24,7 @@
         <li><a id="language-toggle" href="#" th:text="#{home.language}">Polski</a></li>
     </ul>
 </nav>
-<div class="container">
+<div class="containerHome">
     <div class="sidebar">
         <form action="/home" method="get">
             <label for="minPrice" th:text="#{home.minPrice}">Minimalna cena:</label>
@@ -58,6 +58,9 @@
                         <p th:text="#{home.rating}">Ocena: (<span th:text="${product.opinionCount}"></span>)</p>
                         <span th:each="star : ${#numbers.sequence(1, 5)}"
                               th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
+                    </div>
+                    <div th:if="${username == product.owner}">
+                        <a th:href="@{/edit-product/{id}(id=${product.id})}" th:text="#{home.editProduct}">Edytuj produkt</a>
                     </div>
                 </li>
             </ul>

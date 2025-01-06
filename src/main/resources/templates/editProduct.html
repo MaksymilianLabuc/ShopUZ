@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{editProduct.title}">Edit Product</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/homePage.css}">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a th:href="@{/home}" th:text="#{editProduct.home}">Home</a></li>
+        <li th:if="${username != null}" class="dropdown">
+            <a href="#" th:text="${username}"></a>
+            <div class="dropdown-content">
+                <a href="#" th:text="#{editProduct.cart}">Koszyk</a>
+                <a th:href="@{/logout}" th:text="#{editProduct.logout}">Logout</a>
+            </div>
+        </li>
+        <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{editProduct.login}">Zaloguj się</a></li>
+        <li th:if="${username == null}"><a th:href="@{/register}" th:text="#{editProduct.register}">Zarejestruj się</a></li>
+        <li><a th:href="@{/add-product}" th:text="#{editProduct.addProduct}">Add Product</a></li>
+        <li><a id="theme-toggle" href="#" th:text="#{editProduct.theme}">Zmień tryb</a></li>
+        <li><a id="language-toggle" href="#" th:text="#{editProduct.language}">Polski</a></li>
+    </ul>
+</nav>
+<div class="container">
+    <h1 th:text="#{editProduct.productText}">Edit Product</h1>
+    <div th:if="${username != null}">
+        <form action="#" th:action="@{/edit-product/{id}(id=${product.id})}" th:object="${product}" method="post" class="edit-form">
+            <label for="name" th:text="#{editProduct.productName}">Name:</label>
+            <input type="text" id="name" th:field="*{name}" />
+
+            <label for="price" th:text="#{editProduct.productPrice}">Price:</label>
+            <input type="text" id="price" th:field="*{price}" />
+
+            <label for="description" th:text="#{editProduct.productDescription}">Description:</label>
+            <textarea id="description" th:field="*{description}"></textarea>
+
+            <input type="hidden" th:field="*{owner}" th:value="${username}" /> <!-- Ukryte pole owner -->
+
+            <!-- Przycisk edytowania produktu -->
+            <button type="submit" th:text="#{buttons.editProduct}">Zapisz zmiany</button>
+        </form>
+    </div>
+    <p th:if="${username == null}" class="error-message" th:text="#{editProduct.productError}">Musisz być zalogowany aby edytować produkt.</p>
+</div>
+
+<script th:inline="javascript">
+
+    const currentTheme = localStorage.getItem('theme') || 'light-mode';
+    document.body.classList.add(currentTheme);
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const newTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+        document.body.classList.remove('light-mode', 'dark-mode');
+        document.body.classList.add(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
+    document.getElementById('language-toggle').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+        console.log('Language toggle button clicked');
+        const currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'pl';
+        console.log('Current Language:', currentLanguage);
+        const newLanguage = currentLanguage === 'pl' ? 'en' : 'pl';
+        console.log('New Language:', newLanguage);
+        window.location.assign(`${window.location.pathname}?lang=${newLanguage}`);
+    });
+
+</script>
+</body>
+</html>
