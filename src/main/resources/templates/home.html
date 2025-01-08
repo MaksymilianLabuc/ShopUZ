@@ -13,7 +13,7 @@
         <li th:if="${username != null}" class="dropdown">
             <a href="#" th:text="${username}"></a>
             <div class="dropdown-content">
-                <a href="#" th:text="#{home.cart}">Koszyk</a>
+                <a th:href="@{/cart}" th:text="#{home.cart}">Koszyk</a>
                 <a th:href="@{/logout}" th:text="#{home.logout}">Logout</a>
             </div>
         </li>
@@ -62,6 +62,9 @@
                     <div th:if="${username == product.owner}">
                         <a th:href="@{/edit-product/{id}(id=${product.id})}" th:text="#{home.editProduct}">Edytuj produkt</a>
                     </div>
+                    <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                        <button type="submit" th:text="#{buttons.buy}">Kup</button>
+                    </form>
                 </li>
             </ul>
         </div>

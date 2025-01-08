@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{cart.title}">Koszyk</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/homePage.css}">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<nav>
+  <ul>
+    <li><a th:href="@{/home}" th:text="#{cart.home}">Home</a></li>
+    <li th:if="${username != null}" class="dropdown">
+      <a href="#" th:text="${username}"></a>
+      <div class="dropdown-content">
+        <a th:href="@{/cart}" th:text="#{cart.cart}">Koszyk</a>
+        <a th:href="@{/logout}" th:text="#{cart.logout}">Logout</a>
+      </div>
+    </li>
+    <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{cart.login}">Zaloguj się</a></li>
+    <li th:if="${username == null}"><a th:href="@{/register}" th:text="#{cart.register}">Zarejestruj się</a></li>
+    <li><a th:href="@{/add-product}" th:text="#{cart.addProduct}">Add Product</a></li>
+    <li><a id="theme-toggle" href="#" th:text="#{cart.theme}">Zmień tryb</a></li>
+    <li><a id="language-toggle" href="#" th:text="#{cart.language}">Polski</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <h1>Koszyk</h1>
+  <div th:if="${cart.items.size() == 0}">
+    <p>Twój koszyk jest pusty.</p>
+  </div>
+  <div th:if="${cart.items.size() > 0}">
+    <ul>
+      <li th:each="item : ${cart.items}">
+        <span th:text="${item.product.name}"></span>
+        <span th:text="${item.quantity}"></span>
+        <span th:text="${item.product.price}"></span>
+      </li>
+    </ul>
+    <button>Zapłać</button>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  const currentTheme = localStorage.getItem('theme') || 'light-mode';
+  document.body.classList.add(currentTheme);
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    const newTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+    document.body.classList.remove('light-mode', 'dark-mode');
+    document.body.classList.add(newTheme);
+    localStorage.setItem('theme', newTheme);
+  });
+
+  document.getElementById('language-toggle').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent form submission
+    console.log('Language toggle button clicked');
+    const currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'pl';
+    console.log('Current Language:', currentLanguage);
+    const newLanguage = currentLanguage === 'pl' ? 'en' : 'pl';
+    console.log('New Language:', newLanguage);
+    window.location.assign(`${window.location.pathname}?lang=${newLanguage}`);
+  });
+</script>
+
+</body>
+</html>

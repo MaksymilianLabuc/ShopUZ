@@ -11,7 +11,7 @@
         <li th:if="${username != null}" class="dropdown">
             <a href="#" th:text="${username}"></a>
             <div class="dropdown-content">
-                <a href="#" th:text="#{editProduct.cart}">Koszyk</a>
+                <a th:href="@{/cart}" th:text="#{editProduct.cart}">Koszyk</a>
                 <a th:href="@{/logout}" th:text="#{editProduct.logout}">Logout</a>
             </div>
         </li>
