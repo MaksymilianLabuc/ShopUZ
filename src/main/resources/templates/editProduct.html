@@ -13,6 +13,7 @@
             <div class="dropdown-content">
                 <a th:href="@{/cart}" th:text="#{editProduct.cart}">Koszyk</a>
                 <a th:href="@{/logout}" th:text="#{editProduct.logout}">Logout</a>
+                <a th:if="${username == 'admin'}" th:href="@{/code}" th:text="#{editProduct.codes}">Kody</a>
             </div>
         </li>
         <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{editProduct.login}">Zaloguj się</a></li>
@@ -31,6 +32,7 @@
 
             <label for="price" th:text="#{editProduct.productPrice}">Price:</label>
             <input type="text" id="price" th:field="*{price}" />
+            <span th:text="#{editProduct.currency}">(PLN)</span>
 
             <label for="description" th:text="#{editProduct.productDescription}">Description:</label>
             <textarea id="description" th:field="*{description}"></textarea>

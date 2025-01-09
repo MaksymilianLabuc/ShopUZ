@@ -2,6 +2,7 @@ package com.janbat.shopuz.controller;
 
 import com.janbat.shopuz.model.Opinion;
 import com.janbat.shopuz.model.ProductListing;
+import com.janbat.shopuz.service.CartService;
 import com.janbat.shopuz.service.OpinionService;
 import com.janbat.shopuz.service.ProductListingService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ public class HomeController {
     private ProductListingService productListingService;
 
     @Autowired
+    private CartService cartService;
+    @Autowired
     private OpinionService opinionService;
 
     @GetMapping("/home")
@@ -33,6 +36,9 @@ public class HomeController {
                        @RequestParam(value = "minRating", required = false) Integer minRating,
                        Model model, HttpServletRequest request) {
         List<ProductListing> productListings = productListingService.getAllProductListings();
+
+        // Pobierz wszystkie produkty w koszykach
+        List<ProductListing> productsInCarts = cartService.getAllProductsInCarts();
 
         // Filtrowanie produktów
         if (minPrice != null) {
@@ -50,6 +56,11 @@ public class HomeController {
                     .filter(p -> p.getRating() >= minRating)
                     .collect(Collectors.toList());
         }
+
+        // Usuń produkty, które są już w koszykach
+        productListings = productListings.stream()
+                .filter(p -> !productsInCarts.contains(p))
+                .collect(Collectors.toList());
 
         // Sortowanie produktów
         if ("name".equals(sortField)) {
@@ -85,7 +96,6 @@ public class HomeController {
 
         return "home";
     }
-
 
 
 

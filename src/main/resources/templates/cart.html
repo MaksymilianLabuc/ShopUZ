@@ -15,6 +15,7 @@
       <div class="dropdown-content">
         <a th:href="@{/cart}" th:text="#{cart.cart}">Koszyk</a>
         <a th:href="@{/logout}" th:text="#{cart.logout}">Logout</a>
+        <a th:if="${username == 'admin'}" th:href="@{/code}" th:text="#{cart.codes}">Kody</a>
       </div>
     </li>
     <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{cart.login}">Zaloguj się</a></li>
@@ -26,23 +27,41 @@
 </nav>
 
 <div class="container">
-  <h1>Koszyk</h1>
+  <h1 th:text="#{cart.title}">Koszyk</h1>
   <div th:if="${cart.items.size() == 0}">
-    <p>Twój koszyk jest pusty.</p>
+    <p th:text="#{cart.empty}">Twój koszyk jest pusty.</p>
   </div>
   <div th:if="${cart.items.size() > 0}">
-    <ul>
-      <li th:each="item : ${cart.items}">
-        <span th:text="${item.product.name}"></span>
-        <span th:text="${item.quantity}"></span>
-        <span th:text="${item.product.price}"></span>
+    <ul class="cart-items">
+      <li th:each="item : ${cart.items}" class="cart-item">
+        <span class="product-name" th:text="${item.product.name}"></span>
+        <span class="product-quantity"><span th:text="#{cart.quantity}">Ilość: </span><span th:text="${item.quantity}"></span></span>
+        <span class="product-price"><span th:text="#{cart.price}">Cena: </span><span th:text="${item.product.price}"></span><span th:text="#{cart.currency}">PLN</span></span>
+        <form th:action="@{/cart/remove/{id}(id=${item.product.id})}" method="post">
+          <button type="submit" th:text="#{buttons.remove}">Usuń</button>
+        </form>
       </li>
     </ul>
-    <button>Zapłać</button>
+    <p id="total-cost"></p> <!-- Nowy element dla sumy kosztów -->
+    <div>
+      <label for="discountCode" th:text="#{cart.discountCode}">Kod rabatowy:</label>
+      <input type="text" id="discountCode" name="discountCode">
+      <button id="apply-discount-button" type="button" th:text="#{buttons.apply}">Zastosuj</button>
+    </div>
+    <p id="discounted-cost"></p> <!-- Nowy element dla ceny po rabacie -->
+    <form th:action="@{/cart/generate-invoice}" method="post">
+      <label for="email" th:text="#{cart.email}">Adres e-mail:</label>
+      <input type="email" id="email" name="email" required>
+      <input type="hidden" id="hiddenDiscountCode" name="discountCode">
+      <button type="submit" th:text="#{buttons.pay}">Zapłać</button>
+    </form>
+
+
   </div>
 </div>
 
 <script th:inline="javascript">
+  // Ustawienie aktualnego motywu
   const currentTheme = localStorage.getItem('theme') || 'light-mode';
   document.body.classList.add(currentTheme);
   document.getElementById('theme-toggle').addEventListener('click', function () {
@@ -52,15 +71,62 @@
     localStorage.setItem('theme', newTheme);
   });
 
+  // Przełączanie języka
   document.getElementById('language-toggle').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent form submission
-    console.log('Language toggle button clicked');
+    event.preventDefault(); // Zapobiega wysłaniu formularza
+    console.log('Kliknięto przycisk przełączania języka');
     const currentLanguage = new URLSearchParams(window.location.search).get('lang') || 'pl';
-    console.log('Current Language:', currentLanguage);
+    console.log('Aktualny język:', currentLanguage);
     const newLanguage = currentLanguage === 'pl' ? 'en' : 'pl';
-    console.log('New Language:', newLanguage);
+    console.log('Nowy język:', newLanguage);
     window.location.assign(`${window.location.pathname}?lang=${newLanguage}`);
   });
+
+  // Obliczanie i wyświetlanie sumy kosztów
+  function calculateTotalCost() {
+    const cartItems = document.querySelectorAll('.cart-item');
+    let totalCost = 0;
+    cartItems.forEach(item => {
+      const priceElement = item.querySelector('.product-price span:nth-child(2)');
+      const quantityElement = item.querySelector('.product-quantity span:nth-child(2)');
+      const price = parseFloat(priceElement.textContent);
+      const quantity = parseInt(quantityElement.textContent);
+      totalCost += price * quantity;
+    });
+    document.getElementById('total-cost').textContent = `Suma kosztów: ${totalCost.toFixed(2)} PLN`;
+  }
+
+  // Wywołanie funkcji obliczającej sumę kosztów
+  calculateTotalCost();
+
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  // Obsługa kodu rabatowego
+  document.getElementById('apply-discount-button').addEventListener('click', function() {
+    const discountCode = document.getElementById('discountCode').value;
+    const email = document.getElementById('email').value;
+    if (!validateEmail(email)) {
+      alert('Podaj poprawny adres e-mail.');
+      return;
+    }
+    fetch('/cart/apply-discount', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+      },
+      body: new URLSearchParams({ discountCode })
+    })
+            .then(response => response.text())
+            .then(data => {
+              document.getElementById('discounted-cost').textContent = data;
+              document.getElementById('hiddenDiscountCode').value = discountCode; // Ustawienie wartości pola ukrytego
+            })
+            .catch(error => console.error('Error:', error));
+  });
+
 </script>
 
 </body>

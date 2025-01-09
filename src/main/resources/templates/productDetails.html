@@ -15,6 +15,7 @@
             <div class="dropdown-content">
                 <a th:href="@{/cart}" th:text="#{productDetails.cart}">Koszyk</a>
                 <a th:href="@{/logout}" th:text="#{productDetails.logout}">Logout</a>
+                <a th:if="${username == 'admin'}" th:href="@{/code}" th:text="#{productDetails.codes}">Kody</a>
             </div>
         </li>
         <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{productDetails.login}">Zaloguj się</a></li>
@@ -36,9 +37,9 @@
             <span th:text="${product.description}"></span>
         </p>
         <span>
-        <span th:text="#{productDetails.detailsPrice}">Cena:</span>
-        <span th:text="${product.price}"></span>
-    </span>
+            <span th:text="#{productDetails.detailsPrice}">Cena:</span>
+            <span th:text="${product.price}"></span><span th:text="#{productDetails.currency}">PLN</span>
+        </span>
         <p>
             <span th:text="#{productDetails.detailsSeller}">Wystawiający:</span>
             <span th:text="${product.owner}"></span>
@@ -46,7 +47,7 @@
         <div class="rating" th:attr="data-product-id=${product.id}">
             <p>
                 <span th:text="#{productDetails.detailsRating}">Ocena:</span>
-                (<span th:text="${opinionCount}"></span>)
+                ( <span th:text="${opinionCount}"></span>)
             </p>
             <span th:each="star : ${#numbers.sequence(1, 5)}"
                   th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
@@ -57,9 +58,9 @@
     <h3 th:text="#{productDetails.opinions}">Opinie</h3>
         <ul>
             <li th:each="opinion : ${opinions}">
-                <p th:text="#{productDetails.opinionUser}"><strong>Użytkownik:</strong> <span th:text="${opinion.uzytkownik}"></span></p>
-                <p th:text="#{productDetails.opinionRating}"><strong>Ocena:</strong> <span th:text="${opinion.ocena}"></span></p>
-                <p th:text="#{productDetails.opinionDescription}"><strong>Komentarz:</strong> <span th:text="${opinion.opis}"></span></p>
+                <p><span th:text="#{productDetails.opinionUser}"><strong>Użytkownik:</strong></span><span th:text="${opinion.uzytkownik}"></span></p>
+                <p><span th:text="#{productDetails.opinionRating}"><strong>Ocena:</strong></span><span th:text="${opinion.ocena}"></span></p>
+                <p><span th:text="#{productDetails.opinionDescription}"><strong>Komentarz:</strong></span><span th:text="${opinion.opis}"></span></p>
             </li>
         </ul>
     </div>

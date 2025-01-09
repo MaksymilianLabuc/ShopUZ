@@ -15,6 +15,7 @@
             <div class="dropdown-content">
                 <a th:href="@{/cart}" th:text="#{home.cart}">Koszyk</a>
                 <a th:href="@{/logout}" th:text="#{home.logout}">Logout</a>
+                <a th:if="${username == 'admin'}" th:href="@{/code}" th:text="#{home.codes}">Kody</a>
             </div>
         </li>
         <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{home.login}">Zaloguj się</a></li>
@@ -53,9 +54,9 @@
                 <li th:each="product : ${products}" class="product" th:id="'product-' + ${product.id}">
                     <a th:href="@{/product/{id}(id=${product.id})}"><h2 th:text="${product.name}"></h2></a>
                     <p th:text="${product.description}"></p>
-                    <span th:text="${product.price}"></span>
+                    <span th:text="${product.price}"></span><span th:text="#{home.currency}">PLN</span>
                     <div class="rating" th:attr="data-product-id=${product.id}">
-                        <p th:text="#{home.rating}">Ocena: (<span th:text="${product.opinionCount}"></span>)</p>
+                        <p><span th:text="#{home.rating}">Ocena: </span>( <span th:text="${product.opinionCount}"></span>)</p>
                         <span th:each="star : ${#numbers.sequence(1, 5)}"
                               th:classappend="${star <= product.rating} ? 'selected' : ''"></span>
                     </div>
