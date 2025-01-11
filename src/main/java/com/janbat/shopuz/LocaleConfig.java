@@ -1,3 +1,10 @@
+/**
+ * @file LocaleConfig.java
+ * @brief Klasa LocaleConfig konfigurująca lokalizację aplikacji.
+ *
+ * Ta klasa zawiera konfigurację lokalizacji aplikacji, w tym zarządzanie rozpoznawaniem lokalizacji, zmianą lokalizacji oraz źródłem komunikatów.
+ */
+
 package com.janbat.shopuz;
 
 import org.springframework.context.MessageSource;
@@ -12,9 +19,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Locale;
 
+/**
+ * @brief Klasa LocaleConfig konfigurująca lokalizację aplikacji.
+ */
 @Configuration
 public class LocaleConfig implements WebMvcConfigurer {
 
+    /**
+     * @brief Konfiguruje rozpoznawanie lokalizacji.
+     * @return Obiekt LocaleResolver do rozpoznawania lokalizacji.
+     */
     @Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
@@ -22,6 +36,10 @@ public class LocaleConfig implements WebMvcConfigurer {
         return localeResolver;
     }
 
+    /**
+     * @brief Konfiguruje interceptor zmiany lokalizacji.
+     * @return Obiekt LocaleChangeInterceptor do zmiany lokalizacji.
+     */
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
@@ -29,11 +47,19 @@ public class LocaleConfig implements WebMvcConfigurer {
         return interceptor;
     }
 
+    /**
+     * @brief Dodaje interceptory do rejestru.
+     * @param registry Rejestr interceptorów.
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
+    /**
+     * @brief Konfiguruje źródło komunikatów.
+     * @return Obiekt MessageSource do zarządzania komunikatami.
+     */
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
@@ -42,4 +68,3 @@ public class LocaleConfig implements WebMvcConfigurer {
         return messageSource;
     }
 }
-

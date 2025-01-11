@@ -10,11 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @file DiscountCodeController.java
+ * @brief Kontroler do zarządzania kodami rabatowymi.
+ */
 @Controller
 public class DiscountCodeController {
     @Autowired
     private DiscountCodeService discountCodeService;
 
+    /**
+     * @brief Wyświetla stronę z kodami rabatowymi.
+     * @param request Żądanie HTTP.
+     * @param model Model do przechowywania atrybutów dla widoku.
+     * @return Widok kodów rabatowych.
+     */
     @GetMapping("/code")
     public String viewDiscountCodes(HttpServletRequest request, Model model) {
         String username = (String) request.getSession().getAttribute("username");
@@ -27,6 +37,13 @@ public class DiscountCodeController {
         return "code";
     }
 
+    /**
+     * @brief Dodaje nowy kod rabatowy.
+     * @param codeName Nazwa kodu rabatowego.
+     * @param discountPercentage Procent rabatu.
+     * @param request Żądanie HTTP.
+     * @return Przekierowanie do widoku kodów rabatowych.
+     */
     @PostMapping("/code")
     public String addDiscountCode(@RequestParam String codeName, @RequestParam int discountPercentage, HttpServletRequest request) {
         String username = (String) request.getSession().getAttribute("username");
@@ -43,4 +60,3 @@ public class DiscountCodeController {
         return "redirect:/code";
     }
 }
-

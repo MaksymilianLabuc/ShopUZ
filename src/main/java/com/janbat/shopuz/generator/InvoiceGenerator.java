@@ -1,4 +1,12 @@
+/**
+ * @file InvoiceGenerator.java
+ * @brief Klasa InvoiceGenerator do generowania faktur w formacie PDF.
+ *
+ * Ta klasa zawiera metody do generowania faktur w formacie PDF na podstawie koszyka, ceny po rabacie, nazwy użytkownika i daty.
+ */
+
 package com.janbat.shopuz.generator;
+
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -14,8 +22,23 @@ import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * @brief Klasa InvoiceGenerator do generowania faktur w formacie PDF.
+ */
 public class InvoiceGenerator {
 
+    /**
+     * @brief Generuje fakturę w formacie PDF.
+     *
+     * Ta metoda generuje fakturę w formacie PDF na podstawie podanych parametrów.
+     *
+     * @param dest Ścieżka docelowa pliku PDF.
+     * @param cart Koszyk zawierający produkty.
+     * @param discountedCost Cena po rabacie.
+     * @param username Nazwa użytkownika.
+     * @param date Data generowania faktury.
+     * @throws FileNotFoundException Jeśli plik PDF nie może zostać utworzony.
+     */
     public void generateInvoice(String dest, Cart cart, BigDecimal discountedCost, String username, Date date) throws FileNotFoundException {
         PdfWriter writer = new PdfWriter(dest);
         PdfDocument pdf = new PdfDocument(writer);
@@ -57,4 +80,3 @@ public class InvoiceGenerator {
         document.close();
     }
 }
-

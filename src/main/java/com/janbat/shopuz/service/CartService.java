@@ -1,3 +1,10 @@
+/**
+ * @file CartService.java
+ * @brief Klasa CartService do zarządzania operacjami na koszykach.
+ *
+ * Ta klasa zawiera metody do zarządzania operacjami na koszykach, w tym dodawanie i usuwanie przedmiotów oraz pobieranie koszyków użytkowników.
+ */
+
 package com.janbat.shopuz.service;
 
 import com.janbat.shopuz.model.Cart;
@@ -11,17 +18,28 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @brief Klasa CartService do zarządzania operacjami na koszykach.
+ */
 @Service
 public class CartService {
     @Autowired
     private CartRepository cartRepository;
 
-    // Pobiera koszyk użytkownika na podstawie nazwy użytkownika
+    /**
+     * @brief Pobiera koszyk użytkownika na podstawie nazwy użytkownika.
+     * @param username Nazwa użytkownika.
+     * @return Koszyk użytkownika.
+     */
     public Cart getCartByUsername(String username) {
         return cartRepository.findByUsername(username);
     }
 
-    // Dodaje produkt do koszyka użytkownika
+    /**
+     * @brief Dodaje produkt do koszyka użytkownika.
+     * @param username Nazwa użytkownika.
+     * @param product Produkt do dodania.
+     */
     public void addItemToCart(String username, ProductListing product) {
         Cart cart = cartRepository.findByUsername(username);
         if (cart == null) {
@@ -42,7 +60,11 @@ public class CartService {
         System.out.println("Koszyk zapisany dla użytkownika: " + username); // Debugowanie
     }
 
-    // Usuwa przedmiot z koszyka użytkownika
+    /**
+     * @brief Usuwa przedmiot z koszyka użytkownika.
+     * @param username Nazwa użytkownika.
+     * @param productId Identyfikator produktu do usunięcia.
+     */
     @Transactional
     public void removeItemFromCart(String username, Long productId) {
         Cart cart = cartRepository.findByUsername(username);
@@ -68,7 +90,11 @@ public class CartService {
             System.out.println("Koszyk nie znaleziony dla użytkownika: " + username); // Debugowanie
         }
     }
-    // Pobiera wszystkie produkty znajdujące się w koszykach
+
+    /**
+     * @brief Pobiera wszystkie produkty znajdujące się w koszykach.
+     * @return Lista produktów znajdujących się w koszykach.
+     */
     public List<ProductListing> getAllProductsInCarts() {
         List<Cart> carts = cartRepository.findAll();
         List<ProductListing> productsInCarts = new ArrayList<>();

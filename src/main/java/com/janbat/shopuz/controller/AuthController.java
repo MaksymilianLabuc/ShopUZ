@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * @file AuthController.java
+ * @brief Kontroler do działań związanych z uwierzytelnianiem.
+ */
 @Controller
 public class AuthController {
 
@@ -24,6 +28,12 @@ public class AuthController {
     private final CaptchaService captchaService;
     private final CaptchaSettings captchaSettings;
 
+    /**
+     * @brief Konstruktor dla AuthController.
+     * @param userService Serwis do operacji związanych z użytkownikami.
+     * @param captchaService Serwis do weryfikacji CAPTCHA.
+     * @param captchaSettings Ustawienia CAPTCHA.
+     */
     @Autowired
     public AuthController(UserService userService, CaptchaService captchaService, CaptchaSettings captchaSettings) {
         this.userService = userService;
@@ -31,6 +41,11 @@ public class AuthController {
         this.captchaSettings = captchaSettings;
     }
 
+    /**
+     * @brief Wyświetla stronę logowania.
+     * @param model Model do przechowywania atrybutów dla widoku.
+     * @return Widok logowania.
+     */
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("loginForm", new LoginForm());
@@ -39,6 +54,16 @@ public class AuthController {
         return "login";
     }
 
+    /**
+     * @brief Obsługuje przesłanie formularza logowania.
+     * @param captchaResponse Odpowiedź CAPTCHA z formularza.
+     * @param loginForm Dane formularza logowania.
+     * @param bindingResult Wynik walidacji formularza.
+     * @param model Model do przechowywania atrybutów dla widoku.
+     * @param request Żądanie HTTP.
+     * @param redirectAttributes Atrybuty dla scenariuszy przekierowania.
+     * @return Przekierowuje do strony głównej, jeśli logowanie się powiodło, w przeciwnym razie zwraca widok logowania.
+     */
     @PostMapping("/login")
     public String loginUser(@RequestParam("g-recaptcha-response") String captchaResponse, @Valid @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         System.out.println("Username1:"); // Debugging
@@ -61,8 +86,11 @@ public class AuthController {
         return "redirect:/home";
     }
 
-
-
+    /**
+     * @brief Wyświetla stronę rejestracji.
+     * @param model Model do przechowywania atrybutów dla widoku.
+     * @return Widok rejestracji.
+     */
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("registerForm", new RegisterForm());
@@ -70,6 +98,14 @@ public class AuthController {
         return "register";
     }
 
+    /**
+     * @brief Obsługuje przesłanie formularza rejestracji.
+     * @param captchaResponse Odpowiedź CAPTCHA z formularza.
+     * @param registerForm Dane formularza rejestracji.
+     * @param bindingResult Wynik walidacji formularza.
+     * @param model Model do przechowywania atrybutów dla widoku.
+     * @return Przekierowuje do strony logowania, jeśli rejestracja się powiodła, w przeciwnym razie zwraca widok rejestracji.
+     */
     @PostMapping("/register")
     public String registerUser(@RequestParam("g-recaptcha-response") String captchaResponse, @ModelAttribute("registerForm") @Valid RegisterForm registerForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {

@@ -1,3 +1,11 @@
+/**
+ * @file homePage.css
+ * @brief Plik CSS do stylizacji strony głównej.
+ *
+ * Ten plik zawiera definicje stylów CSS dla różnych elementów strony głównej, w tym trybów jasnego i ciemnego, nawigacji, kontenera, paska bocznego, głównej zawartości, przycisków sortowania, listy produktów, menu rozwijanego, formularzy oraz elementów koszyka.
+ */
+
+/* Definicje zmiennych kolorów */
 :root {
     --light-bg: #f2f2f2;
     --light-text: #333;
@@ -68,11 +76,15 @@ nav ul li a {
 
 /* Stylizacja kontenera */
 .container {
+    display: flex;
+    justify-content: center;
     align-items: center;
     width: 100%;
     max-width: 1200px;
     margin-top: 20px;
+    flex-direction: column; /* Dodane, aby elementy były wyświetlane w kolumnie */
 }
+
 .containerHome {
     display: flex;
     width: 100%;
@@ -350,12 +362,11 @@ body.dark-mode form button:hover {
     background-color: var(--dark-primary-hover);
 }
 
-/* Media queries for responsiveness */
+/* Media queries dla responsywności */
 @media (max-width: 768px) {
     .containerHome {
         flex-direction: column;
     }
-
     .sidebar {
         width: 100%;
         height: auto;

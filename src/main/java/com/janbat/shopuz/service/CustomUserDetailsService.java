@@ -1,3 +1,10 @@
+/**
+ * @file CustomUserDetailsService.java
+ * @brief Klasa CustomUserDetailsService do zarządzania szczegółami użytkowników.
+ *
+ * Ta klasa implementuje interfejs UserDetailsService i zawiera metody do ładowania szczegółów użytkowników na podstawie nazwy użytkownika.
+ */
+
 package com.janbat.shopuz.service;
 
 import com.janbat.shopuz.model.User;
@@ -10,12 +17,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * @brief Klasa CustomUserDetailsService do zarządzania szczegółami użytkowników.
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * @brief Ładuje szczegóły użytkownika na podstawie nazwy użytkownika.
+     *
+     * @param username Nazwa użytkownika.
+     * @return Szczegóły użytkownika.
+     * @throws UsernameNotFoundException Jeśli użytkownik nie zostanie znaleziony.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
@@ -28,4 +45,3 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 }
-

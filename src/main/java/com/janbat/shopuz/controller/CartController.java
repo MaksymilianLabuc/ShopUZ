@@ -23,6 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @file CartController.java
+ * @brief Kontroler do zarządzania koszykiem zakupowym.
+ */
 @Controller
 public class CartController {
 
@@ -36,6 +40,12 @@ public class CartController {
     @Autowired
     private JavaMailSender mailSender;
 
+    /**
+     * @brief Wyświetla stronę koszyka.
+     * @param model Model do przechowywania atrybutów dla widoku.
+     * @param request Żądanie HTTP.
+     * @return Widok koszyka.
+     */
     @GetMapping("/cart")
     public String viewCart(Model model, HttpServletRequest request) {
         String username = (String) request.getSession().getAttribute("username");
@@ -55,6 +65,12 @@ public class CartController {
         return "cart";
     }
 
+    /**
+     * @brief Dodaje produkt do koszyka.
+     * @param productId Identyfikator produktu.
+     * @param request Żądanie HTTP.
+     * @return Przekierowanie do widoku koszyka.
+     */
     @PostMapping("/cart/add/{productId}")
     public String addToCart(@PathVariable Long productId, HttpServletRequest request) {
         String username = (String) request.getSession().getAttribute("username");
@@ -66,6 +82,12 @@ public class CartController {
         return "redirect:/cart";
     }
 
+    /**
+     * @brief Usuwa przedmiot z koszyka.
+     * @param id Identyfikator przedmiotu.
+     * @param request Żądanie HTTP.
+     * @return Przekierowanie do widoku koszyka.
+     */
     @PostMapping("/cart/remove/{id}")
     public String removeItemFromCart(@PathVariable Long id, HttpServletRequest request) {
         String username = (String) request.getSession().getAttribute("username");
@@ -75,6 +97,13 @@ public class CartController {
         }
         return "redirect:/cart";
     }
+
+    /**
+     * @brief Zastosowuje kod rabatowy do koszyka.
+     * @param discountCode Kod rabatowy.
+     * @param request Żądanie HTTP.
+     * @return Wiadomość o wyniku zastosowania kodu rabatowego.
+     */
     @PostMapping("/cart/apply-discount")
     @ResponseBody
     public String applyDiscount(@RequestParam String discountCode, HttpServletRequest request) {
@@ -98,40 +127,51 @@ public class CartController {
         return String.format("Cena po rabacie: %.2f PLN", discountedCost.doubleValue());
     }
 
-        @PostMapping("/cart/generate-invoice")
-        public String generateInvoice(HttpServletRequest request) {
-            String username = (String) request.getSession().getAttribute("username");
-            if (username == null) {
-                return "redirect:/login"; // Przekierowanie do logowania, jeśli użytkownik nie jest zalogowany
-            }
-            Cart cart = cartService.getCartByUsername(username);
-            if (cart == null || cart.getItems().isEmpty()) {
-                return "redirect:/cart"; // Przekierowanie do koszyka, jeśli jest pusty
-            }
-            // Obliczanie ceny po rabacie
-            String discountCode = request.getParameter("discountCode");
-            DiscountCode code = discountCodeService.findByCodeName(discountCode);
-            double discount = code != null ? code.getDiscountPercentage() / 100.0 : 0.0;
-            BigDecimal totalCost = cart.getItems().stream()
-                    .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            BigDecimal discountedCost = totalCost.multiply(BigDecimal.valueOf(1 - discount));
+    /**
+     * @brief Generuje fakturę dla koszyka.
+     * @param request Żądanie HTTP.
+     * @return Przekierowanie do widoku koszyka z odpowiednim komunikatem.
+     */
+    @PostMapping("/cart/generate-invoice")
+    public String generateInvoice(HttpServletRequest request) {
+        String username = (String) request.getSession().getAttribute("username");
+        if (username == null) {
+            return "redirect:/login"; // Przekierowanie do logowania, jeśli użytkownik nie jest zalogowany
+        }
+        Cart cart = cartService.getCartByUsername(username);
+        if (cart == null || cart.getItems().isEmpty()) {
+            return "redirect:/cart"; // Przekierowanie do koszyka, jeśli jest pusty
+        }
+        // Obliczanie ceny po rabacie
+        String discountCode = request.getParameter("discountCode");
+        DiscountCode code = discountCodeService.findByCodeName(discountCode);
+        double discount = code != null ? code.getDiscountPercentage() / 100.0 : 0.0;
+        BigDecimal totalCost = cart.getItems().stream()
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal discountedCost = totalCost.multiply(BigDecimal.valueOf(1 - discount));
 
-            InvoiceGenerator invoiceGenerator = new InvoiceGenerator();
-            try {
-                invoiceGenerator.generateInvoice("invoice.pdf", cart, discountedCost, username, new Date());
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return "redirect:/cart?error=invoiceGenerationFailed";
-            }
-
-            // Wysyłanie powiadomienia e-mail
-            String email = request.getParameter("email");
-            sendEmailNotification(email, "Invoice Generated", "Your invoice has been generated and is attached.");
-
-            return "redirect:/cart?success=invoiceGenerated";
+        InvoiceGenerator invoiceGenerator = new InvoiceGenerator();
+        try {
+            invoiceGenerator.generateInvoice("invoice.pdf", cart, discountedCost, username, new Date());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "redirect:/cart?error=invoiceGenerationFailed";
         }
 
+        // Wysyłanie powiadomienia e-mail
+        String email = request.getParameter("email");
+        sendEmailNotification(email, "Invoice Generated", "Your invoice has been generated and is attached.");
+
+        return "redirect:/cart?success=invoiceGenerated";
+    }
+
+    /**
+     * @brief Wysyła powiadomienie e-mail.
+     * @param to Adres odbiorcy.
+     * @param subject Temat wiadomości.
+     * @param text Treść wiadomości.
+     */
     private void sendEmailNotification(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("shopuzproject@interia.pl"); // Ustaw adres nadawcy
@@ -145,6 +185,4 @@ public class CartController {
             logger.error("Błąd podczas wysyłania e-maila: ", e);
         }
     }
-
-
 }

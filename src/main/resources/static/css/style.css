@@ -1,4 +1,9 @@
-/* style.css */
+/**
+ * @file style.css
+ * @brief Plik CSS do stylizacji strony.
+ *
+ * Ten plik zawiera definicje stylów CSS dla różnych elementów strony, w tym trybów jasnego i ciemnego, kontenera formularza, nagłówków, etykiet, pól wejściowych, przycisków, linków oraz komunikatów o błędach.
+ */
 
 /* Ustawienia ogólne */
 body {
@@ -111,6 +116,7 @@ body.dark-mode button {
 body.dark-mode button:hover {
     background-color: #57A05A;
 }
+
 .small-button {
     padding: 5px 10px;
     font-size: 0.8em;
@@ -133,11 +139,13 @@ body.dark-mode a {
 a:hover {
     text-decoration: underline;
 }
+
 .button-container {
     display: flex;
     min-width: 300px;
     max-width: 350px;
 }
+
 /* Stylizacja komunikatów o błędach */
 .error-message {
     font-size: 0.9em;

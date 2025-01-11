@@ -10,6 +10,11 @@
 <nav>
   <ul>
     <li><a th:href="@{/home}" th:text="#{code.home}">Home</a></li>
+    <li><a th:href="@{/add-product}" th:text="#{code.addProduct}">Add Product</a></li>
+    <li><a id="theme-toggle" href="#" th:text="#{code.theme}">Zmień tryb</a></li>
+    <li><a id="language-toggle" href="#" th:text="#{code.language}">Polski</a></li>
+    <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{code.login}">Zaloguj się</a></li>
+    <li th:if="${username == null}"><a th:href="@{/register}" th:text="#{code.register}">Zarejestruj się</a></li>
     <li th:if="${username != null}" class="dropdown">
       <a href="#" th:text="${username}"></a>
       <div class="dropdown-content">
@@ -18,11 +23,6 @@
         <a th:if="${username == 'admin'}" th:href="@{/code}" th:text="#{code.codes}">Kody</a>
       </div>
     </li>
-    <li th:if="${username == null}"><a th:href="@{/login}" th:text="#{code.login}">Zaloguj się</a></li>
-    <li th:if="${username == null}"><a th:href="@{/register}" th:text="#{code.register}">Zarejestruj się</a></li>
-    <li><a th:href="@{/add-product}" th:text="#{code.addProduct}">Add Product</a></li>
-    <li><a id="theme-toggle" href="#" th:text="#{code.theme}">Zmień tryb</a></li>
-    <li><a id="language-toggle" href="#" th:text="#{code.language}">Polski</a></li>
   </ul>
 </nav>
 

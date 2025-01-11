@@ -18,6 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @file HomeController.java
+ * @brief Kontroler dla strony głównej.
+ *
+ * Ta klasa zawiera metody obsługujące żądania HTTP dla strony głównej, dodawania produktów, oceniania produktów, wyświetlania szczegółów produktów oraz dodawania opinii.
+ */
+
 @Controller
 public class HomeController {
     @Autowired
@@ -25,9 +32,22 @@ public class HomeController {
 
     @Autowired
     private CartService cartService;
+
     @Autowired
     private OpinionService opinionService;
 
+    /**
+     * @brief Obsługuje żądanie GET dla strony głównej.
+     *
+     * @param sortField Pole do sortowania.
+     * @param sortDir Kierunek sortowania.
+     * @param minPrice Minimalna cena.
+     * @param maxPrice Maksymalna cena.
+     * @param minRating Minimalna ocena.
+     * @param model Model do przekazania danych do widoku.
+     * @param request Żądanie HTTP.
+     * @return Nazwa widoku strony głównej.
+     */
     @GetMapping("/home")
     public String home(@RequestParam(value = "sortField", required = false) String sortField,
                        @RequestParam(value = "sortDir", required = false) String sortDir,
@@ -97,8 +117,13 @@ public class HomeController {
         return "home";
     }
 
-
-
+    /**
+     * @brief Wyświetla formularz dodawania produktu.
+     *
+     * @param model Model do przekazania danych do widoku.
+     * @param request Żądanie HTTP.
+     * @return Nazwa widoku formularza dodawania produktu.
+     */
     @GetMapping("/add-product")
     public String showAddProductForm(Model model, HttpServletRequest request) {
         ProductListing product = new ProductListing();
@@ -114,6 +139,14 @@ public class HomeController {
         return "addProduct";
     }
 
+    /**
+     * @brief Dodaje nowy produkt.
+     *
+     * @param product Produkt do dodania.
+     * @param request Żądanie HTTP.
+     * @param model Model do przekazania danych do widoku.
+     * @return Przekierowanie do strony głównej.
+     */
     @PostMapping("/add-product")
     public String addProduct(@ModelAttribute ProductListing product, HttpServletRequest request, Model model) {
         // Uzyskanie nazwy użytkownika z sesji
@@ -140,6 +173,13 @@ public class HomeController {
         return "redirect:/home";
     }
 
+    /**
+     * @brief Aktualizuje ocenę produktu.
+     *
+     * @param id Identyfikator produktu.
+     * @param rating Ocena produktu.
+     * @return Odpowiedź HTTP z komunikatem o sukcesie.
+     */
     @PostMapping("/rate-product/{id}/{rating}")
     public ResponseEntity<?> rateProduct(@PathVariable Long id, @PathVariable int rating) {
         ProductListing product = productListingService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
@@ -153,6 +193,14 @@ public class HomeController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * @brief Wyświetla szczegóły produktu.
+     *
+     * @param id Identyfikator produktu.
+     * @param model Model do przekazania danych do widoku.
+     * @param request Żądanie HTTP.
+     * @return Nazwa widoku szczegółów produktu.
+     */
     @GetMapping("/product/{id}")
     public String showProductDetails(@PathVariable Long id, Model model, HttpServletRequest request) {
         ProductListing product = productListingService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
@@ -174,13 +222,20 @@ public class HomeController {
         List<Opinion> opinions = opinionService.getOpinionsByProductId(id);
         model.addAttribute("opinions", opinions);
 
-
         // Dodanie nowego obiektu Opinion do modelu
         model.addAttribute("opinion", new Opinion());
 
         return "productDetails"; // Nazwa szablonu HTML
     }
 
+    /**
+     * @brief Dodaje opinię do produktu.
+     *
+     * @param productId Identyfikator produktu.
+     * @param opinion Opinia do dodania.
+     * @param request Żądanie HTTP.
+     * @return Przekierowanie do szczegółów produktu.
+     */
     @PostMapping("/add-opinion/{productId}")
     public String addOpinion(@PathVariable Long productId, @ModelAttribute Opinion opinion, HttpServletRequest request) {
         ProductListing product = productListingService.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
@@ -194,11 +249,26 @@ public class HomeController {
         productListingService.saveProduct(product);
         return "redirect:/product/" + productId;
     }
-
-    @GetMapping("/logout") public String logout(HttpServletRequest request) {
+    /**
+     * @brief Wylogowuje użytkownika.
+     *
+     * @param request Żądanie HTTP.
+     * @return Przekierowanie do panelu logowania.
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
         request.getSession().invalidate(); // Inwalidacja sesji
         return "redirect:/login"; // Przekierowanie do panelu logowania
-        }
+    }
+
+    /**
+     * @brief Wyświetla formularz edycji produktu.
+     *
+     * @param id Identyfikator produktu.
+     * @param model Model do przekazania danych do widoku.
+     * @param request Żądanie HTTP.
+     * @return Nazwa widoku formularza edycji produktu.
+     */
     @GetMapping("/edit-product/{id}")
     public String showEditProductForm(@PathVariable Long id, Model model, HttpServletRequest request) {
         ProductListing product = productListingService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
@@ -210,6 +280,16 @@ public class HomeController {
         model.addAttribute("username", username); // Dodanie nazwy użytkownika do modelu
         return "editProduct"; // Nazwa szablonu HTML dla formularza edycji produktu
     }
+
+    /**
+     * @brief Edytuje produkt.
+     *
+     * @param id Identyfikator produktu.
+     * @param product Produkt do edycji.
+     * @param request Żądanie HTTP.
+     * @param model Model do przekazania danych do widoku.
+     * @return Przekierowanie do strony głównej.
+     */
     @PostMapping("/edit-product/{id}")
     public String editProduct(@PathVariable Long id, @ModelAttribute ProductListing product, HttpServletRequest request, Model model) {
         String username = (String) request.getSession().getAttribute("username");
@@ -220,6 +300,4 @@ public class HomeController {
         productListingService.saveProduct(product);
         return "redirect:/home";
     }
-
-
 }
